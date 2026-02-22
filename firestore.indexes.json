@@ -1,0 +1,29 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "features",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "sprintNumber", "order": "ASCENDING" },
+        { "fieldPath": "featureNumber", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "features",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "assignee", "order": "ASCENDING" },
+        { "fieldPath": "sprintNumber", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "features",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "completedDate", "order": "ASCENDING" },
+        { "fieldPath": "featureNumber", "order": "ASCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

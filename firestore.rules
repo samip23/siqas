@@ -1,0 +1,28 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Features collection
+    // TODO: For production with auth, replace `true` with `request.auth != null`
+    match /features/{featureId} {
+      allow read: if true;
+      allow create: if true
+        && request.resource.data.keys().hasAll([
+            'featureNumber', 'name', 'priority',
+            'assignee', 'sprintNumber', 'createdAt'
+           ])
+        && request.resource.data.featureNumber is number
+        && request.resource.data.sprintNumber is number
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0;
+      allow update: if true;
+      allow delete: if true;
+    }
+
+    // Deny all other collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

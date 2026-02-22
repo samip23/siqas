@@ -1,0 +1,11 @@
+Req ID,Title,Description,Priority,Category
+FR-001,User Registration,The system shall allow a new user to register using email and password.,High,Authentication
+FR-002,User Login,The system shall allow registered users to log in using valid credentials.,High,Authentication
+FR-003,Add Friend,The system shall allow users to send a friend request to another user.,High,Social
+FR-004,Accept/Reject Friend Request,The system shall allow users to accept or reject incoming friend requests.,High,Social
+FR-005,View Friends List,The system shall display a list of accepted friends for the logged-in user.,Medium,Social
+FR-006,Remove Friend,The system shall allow users to remove an existing friend from their friends list.,Medium,Social
+FR-007,Search Users,The system shall allow users to search for other users by name or email.,Medium,Search
+FR-008,Profile Update,The system shall allow users to update their profile information such as name and profile picture.,Low,Profile
+FR-009,Password Reset,The system shall allow users to reset their password via email verification.,High,Authentication
+FR-010,Privacy Settings,The system shall allow users to configure privacy settings for their profile and friend visibility.,Low,Settings
