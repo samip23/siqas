@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "start": "netlify dev --offline",
     "build": "vite build",
     "preview": "vite preview",
     "deploy": "npm run build && firebase deploy --only hosting"
@@ -28,6 +29,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.1",
+    "netlify-cli": "^23.15.1",
     "vite": "^5.4.2"
   }
 }
