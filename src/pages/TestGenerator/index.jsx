@@ -21,18 +21,18 @@ const S = { IDLE: 'IDLE', PARSED: 'PARSED', GENERATING: 'GENERATING', DONE: 'DON
 
 // ── Colour maps ───────────────────────────────────────────────────────────────
 const PRIORITY_COLORS = {
-  High:   { bg: '#FEF2F2', color: '#DC2626', border: '#FCA5A5' },
-  Medium: { bg: '#FFFBEB', color: '#D97706', border: '#FDE68A' },
-  Low:    { bg: '#ECFDF5', color: '#059669', border: '#6EE7B7' },
+  High:   { bg: 'rgba(248,113,113,0.14)', color: '#F87171', border: 'rgba(248,113,113,0.30)' },
+  Medium: { bg: 'rgba(245,158,11,0.14)',  color: '#F59E0B', border: 'rgba(245,158,11,0.30)'  },
+  Low:    { bg: 'rgba(16,185,129,0.14)',  color: '#10B981', border: 'rgba(16,185,129,0.30)'  },
 }
 const TYPE_COLORS = {
-  Functional:   { bg: '#EFF4FB', color: '#1A3A6B', border: '#ADC6E7' },
-  Negative:     { bg: '#FEF2F2', color: '#DC2626', border: '#FCA5A5' },
-  'Edge Case':  { bg: '#FDF4FF', color: '#9333EA', border: '#E9D5FF' },
-  Integration:  { bg: '#EFF8FF', color: '#0EA5E9', border: '#BAE6FD' },
+  Functional:  { bg: 'rgba(96,165,250,0.12)',  color: '#60A5FA', border: 'rgba(96,165,250,0.28)'  },
+  Negative:    { bg: 'rgba(248,113,113,0.12)', color: '#F87171', border: 'rgba(248,113,113,0.28)' },
+  'Edge Case': { bg: 'rgba(167,139,250,0.12)', color: '#A78BFA', border: 'rgba(167,139,250,0.28)' },
+  Integration: { bg: 'rgba(14,165,233,0.12)',  color: '#38BDF8', border: 'rgba(14,165,233,0.28)'  },
 }
 function colorFor(map, key) {
-  return map[key] ?? { bg: '#F1F5FA', color: '#546E8A', border: '#CBD5E1' }
+  return map[key] ?? { bg: 'rgba(238,240,255,0.07)', color: '#8891A8', border: 'rgba(238,240,255,0.14)' }
 }
 
 // ── Drop Zone ─────────────────────────────────────────────────────────────────
@@ -53,16 +53,16 @@ function DropZone({ onFile, disabled }) {
       onDrop={e => { e.preventDefault(); setOver(false); pick(e.dataTransfer.files[0]) }}
       sx={{
         border: `2px dashed`,
-        borderColor: over ? '#0EA5E9' : '#CBD5E1',
+        borderColor: over ? '#818CF8' : 'rgba(238,240,255,0.15)',
         borderRadius: 3, p: { xs: 4, sm: 6 }, textAlign: 'center',
         cursor: disabled ? 'default' : 'pointer',
-        bgcolor: over ? '#EFF8FF' : '#F8FAFC',
+        bgcolor: over ? 'rgba(129,140,248,0.06)' : 'rgba(238,240,255,0.02)',
         transition: 'all 0.18s ease',
-        '&:hover': disabled ? {} : { borderColor: '#0EA5E9', bgcolor: '#EFF8FF' },
+        '&:hover': disabled ? {} : { borderColor: '#818CF8', bgcolor: 'rgba(129,140,248,0.04)' },
       }}
     >
       <input ref={inputRef} type="file" accept=".csv" hidden onChange={e => pick(e.target.files[0])} />
-      <UploadFileIcon sx={{ fontSize: 48, color: over ? '#0EA5E9' : '#94A3B8', mb: 1.5, transition: 'color 0.18s' }} />
+      <UploadFileIcon sx={{ fontSize: 48, color: over ? '#818CF8' : 'rgba(238,240,255,0.25)', mb: 1.5, transition: 'color 0.18s' }} />
       <Typography variant="h6" fontWeight={700} color={over ? 'secondary' : 'text.primary'} mb={0.5}>
         Drop your requirements CSV here
       </Typography>
@@ -117,8 +117,8 @@ function DetailDialog({ tc, onClose }) {
           ))}
         </Box>
 
-        <Box mt={2.5} p={2} sx={{ bgcolor: '#ECFDF5', border: '1px solid #6EE7B7', borderRadius: 2 }}>
-          <Typography variant="subtitle2" color="success.dark" mb={0.5}>Expected Result</Typography>
+        <Box mt={2.5} p={2} sx={{ bgcolor: 'rgba(16,185,129,0.10)', border: '1px solid rgba(16,185,129,0.28)', borderRadius: 2 }}>
+          <Typography variant="subtitle2" sx={{ color: '#10B981' }} mb={0.5}>Expected Result</Typography>
           <Typography variant="body2" color="text.primary">{tc.expectedResult}</Typography>
         </Box>
       </DialogContent>
@@ -139,12 +139,12 @@ function RequirementsTable({ requirements }) {
     <Box sx={{ overflowX: 'auto' }}>
       <Box component="table" sx={{
         width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem',
-        '& th': { textAlign: 'left', py: 1.25, px: 2, bgcolor: '#F8FAFC', fontWeight: 800,
-          fontSize: '0.68rem', color: '#546E8A', borderBottom: '2px solid', borderColor: 'divider',
+        '& th': { textAlign: 'left', py: 1.25, px: 2, bgcolor: '#1A1E2C', fontWeight: 800,
+          fontSize: '0.68rem', color: '#8891A8', borderBottom: '2px solid', borderColor: 'divider',
           letterSpacing: '0.06em', textTransform: 'uppercase', whiteSpace: 'nowrap' },
         '& td': { py: 1.25, px: 2, borderBottom: '1px solid', borderColor: 'divider', verticalAlign: 'top' },
         '& tr:last-child td': { border: 0 },
-        '& tbody tr:hover td': { bgcolor: '#FAFCFF' },
+        '& tbody tr:hover td': { bgcolor: 'rgba(238,240,255,0.03)' },
       }}>
         <thead>
           <tr>
@@ -180,12 +180,12 @@ function TestCasesTable({ testCases, onSelect }) {
     <Box sx={{ overflowX: 'auto' }}>
       <Box component="table" sx={{
         width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem',
-        '& th': { textAlign: 'left', py: 1.5, px: 2.5, bgcolor: '#F8FAFC', fontWeight: 800,
-          fontSize: '0.70rem', color: '#546E8A', borderBottom: '2px solid', borderColor: 'divider',
+        '& th': { textAlign: 'left', py: 1.5, px: 2.5, bgcolor: '#1A1E2C', fontWeight: 800,
+          fontSize: '0.70rem', color: '#8891A8', borderBottom: '2px solid', borderColor: 'divider',
           letterSpacing: '0.06em', textTransform: 'uppercase', whiteSpace: 'nowrap' },
         '& td': { py: 1.5, px: 2.5, borderBottom: '1px solid', borderColor: 'divider', verticalAlign: 'middle' },
         '& tr:last-child td': { border: 0 },
-        '& tbody tr:hover td': { bgcolor: '#FAFCFF', cursor: 'pointer' },
+        '& tbody tr:hover td': { bgcolor: 'rgba(238,240,255,0.03)', cursor: 'pointer' },
       }}>
         <thead>
           <tr>
@@ -332,7 +332,7 @@ export default function TestGenerator() {
                   </Typography>
                 </Box>
               </Stack>
-              <Typography variant="h4" sx={{ color: 'white', fontWeight: 900, letterSpacing: '-0.5px', mb: 0.5 }}>
+              <Typography sx={{ color: 'white', fontWeight: 800, fontSize: { xs: '1.5rem', sm: '1.75rem' }, letterSpacing: '-0.3px', mb: 0.5, fontFamily: '"Syne",sans-serif' }}>
                 Test Case Generator
               </Typography>
               <Typography sx={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.875rem' }}>
@@ -393,8 +393,8 @@ export default function TestGenerator() {
                     <Box key={col.name} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
                       <Chip label={col.required ? 'Required' : 'Optional'} size="small"
                         sx={{ fontSize: '0.60rem', fontWeight: 700, height: 18, mt: '1px', flexShrink: 0,
-                          bgcolor: col.required ? '#FEF2F2' : '#EFF4FB',
-                          color: col.required ? '#DC2626' : '#1A3A6B' }} />
+                          bgcolor: col.required ? 'rgba(248,113,113,0.14)' : 'rgba(238,240,255,0.08)',
+                          color: col.required ? '#F87171' : '#8891A8' }} />
                       <Box>
                         <Typography fontSize="0.82rem" fontWeight={700}>{col.name}</Typography>
                         <Typography fontSize="0.72rem" color="text.secondary">{col.aliases}</Typography>
@@ -490,10 +490,10 @@ export default function TestGenerator() {
           {/* Stats bar */}
           <Grid container spacing={2}>
             {[
-              { label: 'Test Cases Generated', value: testCases.length, color: '#6D28D9', bg: '#FDF4FF' },
-              { label: 'High Priority', value: countBy(testCases, 'priority', 'High'), color: '#DC2626', bg: '#FEF2F2' },
-              { label: 'Functional Tests', value: countBy(testCases, 'type', 'Functional'), color: '#1A3A6B', bg: '#EFF4FB' },
-              { label: 'Negative / Edge Cases', value: countBy(testCases, 'type', 'Negative') + countBy(testCases, 'type', 'Edge Case'), color: '#D97706', bg: '#FFFBEB' },
+              { label: 'Test Cases Generated', value: testCases.length, color: '#A78BFA', bg: 'rgba(167,139,250,0.14)' },
+              { label: 'High Priority', value: countBy(testCases, 'priority', 'High'), color: '#F87171', bg: 'rgba(248,113,113,0.14)' },
+              { label: 'Functional Tests', value: countBy(testCases, 'type', 'Functional'), color: '#60A5FA', bg: 'rgba(96,165,250,0.14)' },
+              { label: 'Negative / Edge Cases', value: countBy(testCases, 'type', 'Negative') + countBy(testCases, 'type', 'Edge Case'), color: '#F59E0B', bg: 'rgba(245,158,11,0.14)' },
             ].map(stat => (
               <Grid item xs={6} sm={3} key={stat.label}>
                 <Card sx={{ height: '100%' }}>
