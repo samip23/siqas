@@ -70,8 +70,8 @@ Remember: respond with ONLY a raw JSON array of test case objects.`
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 8192,
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 4096,
         system: SYSTEM_PROMPT,
         messages: [{ role: 'user', content: userPrompt }],
       }),
