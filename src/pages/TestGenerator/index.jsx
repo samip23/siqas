@@ -13,6 +13,10 @@ import OpenInFullIcon from '@mui/icons-material/OpenInFull'
 import ReplayIcon from '@mui/icons-material/Replay'
 import WarningAmberIcon from '@mui/icons-material/WarningAmber'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
+import {
+  PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis,
+  Tooltip as ReTooltip, Legend, ResponsiveContainer,
+} from 'recharts'
 import { parseRequirementsCSV } from '../../services/requirementParser'
 import { DotsPattern } from '../../components/illustrations/Illustrations'
 
@@ -240,6 +244,152 @@ function TestCasesTable({ testCases, onSelect }) {
         </tbody>
       </Box>
     </Box>
+  )
+}
+
+// ── Chart tooltip ─────────────────────────────────────────────────────────────
+function DarkTooltip({ active, payload, label }) {
+  if (!active || !payload?.length) return null
+  const entry = payload[0]
+  return (
+    <Box sx={{
+      bgcolor: '#1E2235', border: '1px solid rgba(238,240,255,0.10)',
+      borderRadius: 2, px: 1.5, py: 1, boxShadow: '0 8px 24px rgba(0,0,0,0.50)',
+    }}>
+      {label && <Typography sx={{ color: '#8891A8', fontSize: '0.70rem', mb: 0.25 }}>{label}</Typography>}
+      <Typography sx={{ color: entry.payload?.color ?? entry.fill ?? '#EEF0FF', fontWeight: 700, fontSize: '0.82rem' }}>
+        {entry.name}: <span style={{ color: '#EEF0FF' }}>{entry.value}</span>
+      </Typography>
+    </Box>
+  )
+}
+
+// ── Summary charts ────────────────────────────────────────────────────────────
+function TestSummaryCharts({ testCases, requirements }) {
+  const priorityData = [
+    { name: 'High',   value: testCases.filter(tc => tc.priority === 'High').length,   color: '#F87171' },
+    { name: 'Medium', value: testCases.filter(tc => tc.priority === 'Medium').length, color: '#F59E0B' },
+    { name: 'Low',    value: testCases.filter(tc => tc.priority === 'Low').length,    color: '#10B981' },
+  ].filter(d => d.value > 0)
+
+  const typeData = [
+    { name: 'Functional',  value: testCases.filter(tc => tc.type === 'Functional').length,  color: '#60A5FA' },
+    { name: 'Negative',    value: testCases.filter(tc => tc.type === 'Negative').length,    color: '#F87171' },
+    { name: 'Edge Case',   value: testCases.filter(tc => tc.type === 'Edge Case').length,   color: '#A78BFA' },
+    { name: 'Integration', value: testCases.filter(tc => tc.type === 'Integration').length, color: '#38BDF8' },
+  ].filter(d => d.value > 0)
+
+  const reqCoverage = requirements.length > 1
+    ? requirements.map(r => ({
+        name: r.id,
+        value: testCases.filter(tc => tc.requirementId === r.id).length,
+        color: '#818CF8',
+      }))
+    : []
+
+  const RADIAN = Math.PI / 180
+  const renderCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
+    if (percent < 0.06) return null
+    const r = innerRadius + (outerRadius - innerRadius) * 0.5
+    const x = cx + r * Math.cos(-midAngle * RADIAN)
+    const y = cy + r * Math.sin(-midAngle * RADIAN)
+    return (
+      <text x={x} y={y} fill="white" textAnchor="middle" dominantBaseline="central"
+        style={{ fontSize: '0.72rem', fontWeight: 700 }}>
+        {`${(percent * 100).toFixed(0)}%`}
+      </text>
+    )
+  }
+
+  return (
+    <Card>
+      <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+        <Stack direction="row" alignItems="center" spacing={1} mb={0.5}>
+          <Box sx={{ bgcolor: 'rgba(129,140,248,0.18)', borderRadius: '8px', p: 0.75, display: 'flex' }}>
+            <AutoAwesomeIcon sx={{ color: '#A5B4FC', fontSize: 16 }} />
+          </Box>
+          <Typography variant="subtitle1" fontWeight={700}>Results Summary</Typography>
+        </Stack>
+        <Typography variant="caption" color="text.secondary" display="block" mb={3}>
+          Visual breakdown of the {testCases.length} generated test cases
+        </Typography>
+
+        <Grid container spacing={3}>
+          {/* Priority donut */}
+          <Grid item xs={12} sm={5}>
+            <Typography variant="caption" color="text.secondary" fontWeight={600}
+              sx={{ textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', mb: 1.5 }}>
+              Priority Distribution
+            </Typography>
+            <ResponsiveContainer width="100%" height={210}>
+              <PieChart>
+                <Pie data={priorityData} cx="50%" cy="50%"
+                  innerRadius={58} outerRadius={85}
+                  paddingAngle={3} dataKey="value"
+                  labelLine={false} label={renderCustomLabel}>
+                  {priorityData.map((entry, i) => (
+                    <Cell key={i} fill={entry.color} stroke="transparent" />
+                  ))}
+                </Pie>
+                <ReTooltip content={<DarkTooltip />} />
+                <Legend
+                  iconType="circle" iconSize={8}
+                  formatter={value => (
+                    <span style={{ color: '#8891A8', fontSize: '0.78rem' }}>{value}</span>
+                  )}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </Grid>
+
+          {/* Type breakdown bar */}
+          <Grid item xs={12} sm={7}>
+            <Typography variant="caption" color="text.secondary" fontWeight={600}
+              sx={{ textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', mb: 1.5 }}>
+              Test Type Breakdown
+            </Typography>
+            <ResponsiveContainer width="100%" height={210}>
+              <BarChart data={typeData} layout="vertical"
+                margin={{ left: 8, right: 32, top: 4, bottom: 4 }}>
+                <XAxis type="number" allowDecimals={false}
+                  tick={{ fill: '#8891A8', fontSize: 11 }} axisLine={false} tickLine={false} />
+                <YAxis type="category" dataKey="name" width={88}
+                  tick={{ fill: '#8891A8', fontSize: 11 }} axisLine={false} tickLine={false} />
+                <ReTooltip content={<DarkTooltip />} cursor={{ fill: 'rgba(238,240,255,0.04)' }} />
+                <Bar dataKey="value" radius={[0, 5, 5, 0]} maxBarSize={22} label={{ position: 'right', fill: '#8891A8', fontSize: 11 }}>
+                  {typeData.map((entry, i) => (
+                    <Cell key={i} fill={entry.color} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </Grid>
+
+          {/* Requirements coverage (only when multiple reqs) */}
+          {reqCoverage.length > 1 && (
+            <Grid item xs={12}>
+              <Divider sx={{ mb: 2.5 }} />
+              <Typography variant="caption" color="text.secondary" fontWeight={600}
+                sx={{ textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', mb: 1.5 }}>
+                Coverage per Requirement
+              </Typography>
+              <ResponsiveContainer width="100%" height={Math.max(120, reqCoverage.length * 34)}>
+                <BarChart data={reqCoverage} layout="vertical"
+                  margin={{ left: 8, right: 48, top: 4, bottom: 4 }}>
+                  <XAxis type="number" allowDecimals={false}
+                    tick={{ fill: '#8891A8', fontSize: 11 }} axisLine={false} tickLine={false} />
+                  <YAxis type="category" dataKey="name" width={80}
+                    tick={{ fill: '#8891A8', fontSize: 11 }} axisLine={false} tickLine={false} />
+                  <ReTooltip content={<DarkTooltip />} cursor={{ fill: 'rgba(238,240,255,0.04)' }} />
+                  <Bar dataKey="value" fill="#818CF8" radius={[0, 5, 5, 0]} maxBarSize={18}
+                    label={{ position: 'right', fill: '#8891A8', fontSize: 11 }} />
+                </BarChart>
+              </ResponsiveContainer>
+            </Grid>
+          )}
+        </Grid>
+      </CardContent>
+    </Card>
   )
 }
 
@@ -509,6 +659,9 @@ export default function TestGenerator() {
               </Grid>
             ))}
           </Grid>
+
+          {/* Charts summary */}
+          <TestSummaryCharts testCases={testCases} requirements={requirements} />
 
           {/* Table */}
           <Card>
