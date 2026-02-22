@@ -54,7 +54,7 @@ export const handler = async (event) => {
     }
   }
 
-  const userPrompt = `Generate comprehensive test cases for the following ${requirements.length} business requirement(s). Aim for 2–4 test cases per requirement.
+  const userPrompt = `Generate comprehensive test cases for the following ${requirements.length} business requirement(s). Aim for 2–3 test cases per requirement.
 
 Requirements:
 ${JSON.stringify(requirements, null, 2)}
