@@ -37,11 +37,11 @@ function DropZone({ onFile, disabled }) {
     <Paper onDragOver={e=>{e.preventDefault();setDragOver(true)}} onDragLeave={()=>setDragOver(false)}
       onDrop={handleDrop} onClick={()=>!disabled&&inputRef.current?.click()} elevation={0}
       sx={{
-        border:`2px dashed ${dragOver?'#0EA5E9':'#C9D9EC'}`, borderRadius:3,
-        bgcolor: dragOver?'rgba(14,165,233,0.04)':'#FAFBFE',
+        border:`2px dashed ${dragOver?'#818CF8':'rgba(238,240,255,0.15)'}`, borderRadius:3,
+        bgcolor: dragOver?'rgba(129,140,248,0.06)':'rgba(238,240,255,0.02)',
         cursor: disabled?'not-allowed':'pointer', transition:'all 0.2s ease',
         p:3, textAlign:'center', display:'flex', flexDirection:'column', alignItems:'center', gap:1.5,
-        '&:hover': disabled?{}:{ borderColor:'#0EA5E9', bgcolor:'rgba(14,165,233,0.03)',
+        '&:hover': disabled?{}:{ borderColor:'#818CF8', bgcolor:'rgba(129,140,248,0.04)',
           '& .drop-icon':{ transform:'translateY(-4px)' } },
       }}>
       <input ref={inputRef} type="file" accept=".csv,text/csv" hidden disabled={disabled}
@@ -50,7 +50,7 @@ function DropZone({ onFile, disabled }) {
         <DropZoneIllustration />
       </Box>
       <Box>
-        <Typography variant="h6" fontWeight={700} color={dragOver?'secondary.main':'text.primary'} mb={0.5}>
+        <Typography variant="h6" fontWeight={700} sx={{color: dragOver?'#818CF8':'#EEF0FF'}} mb={0.5}>
           {dragOver?'Release to upload':'Drag & drop your CSV file'}
         </Typography>
         <Typography variant="body2" color="text.secondary">
@@ -103,16 +103,17 @@ export default function FeatureUpload() {
       {/* Hero Banner */}
       <Box sx={{
         position:'relative', overflow:'hidden', borderRadius:4, mb:3,
-        background:'linear-gradient(135deg, #0A1C42 0%, #1A3A6B 55%, #143A82 100%)',
+        background:'linear-gradient(135deg, #0D0F18 0%, #131830 50%, #1A1F3A 100%)',
+        border:'1px solid rgba(129,140,248,0.15)',
         p:{ xs:3, sm:4 }, display:'flex', alignItems:'center', justifyContent:'space-between', gap:3,
       }}>
         <DotsPattern color="#FFFFFF" opacity={0.055} cols={14} rows={6} gap={22} />
         <Box maxWidth={420} zIndex={1}>
           <Stack direction="row" alignItems="center" spacing={1} mb={1}>
-            <Box sx={{bgcolor:'rgba(14,165,233,0.22)',borderRadius:'50%',p:0.75,display:'flex'}}>
-              <UploadFileIcon sx={{color:'#7DD3FC',fontSize:20}} />
+            <Box sx={{bgcolor:'rgba(129,140,248,0.20)',borderRadius:'50%',p:0.75,display:'flex'}}>
+              <UploadFileIcon sx={{color:'#A5B4FC',fontSize:20}} />
             </Box>
-            <Typography variant="overline" sx={{color:'rgba(255,255,255,0.55)',letterSpacing:'0.12em'}}>CSV IMPORT</Typography>
+            <Typography variant="overline" sx={{color:'rgba(238,240,255,0.45)',letterSpacing:'0.12em'}}>CSV IMPORT</Typography>
           </Stack>
           <Typography variant="h4" sx={{color:'white',mb:1.5,lineHeight:1.2}}>Feature Upload</Typography>
           <Typography variant="body1" sx={{color:'rgba(255,255,255,0.65)',mb:2.5,lineHeight:1.65}}>
@@ -121,8 +122,8 @@ export default function FeatureUpload() {
           <Stack direction="row" spacing={1} flexWrap="wrap" gap={1}>
             {['Auto-validates','Handles 500+ rows','Smart date parsing','Re-upload safe'].map(tag=>(
               <Chip key={tag} label={tag} size="small"
-                sx={{bgcolor:'rgba(255,255,255,0.10)',color:'rgba(255,255,255,0.85)',
-                  border:'1px solid rgba(255,255,255,0.18)',fontWeight:600,fontSize:'0.72rem'}} />
+                sx={{bgcolor:'rgba(129,140,248,0.12)',color:'rgba(238,240,255,0.80)',
+                  border:'1px solid rgba(129,140,248,0.25)',fontWeight:600,fontSize:'0.72rem'}} />
             ))}
           </Stack>
         </Box>
@@ -220,8 +221,8 @@ export default function FeatureUpload() {
             <CardContent sx={{p:0}}>
               <Box px={3} py={2} display="flex" alignItems="center" gap={1.5}
                 sx={{borderBottom:'1px solid',borderColor:'divider'}}>
-                <Box sx={{bgcolor:'primary.main',borderRadius:'8px',p:0.75,display:'flex'}}>
-                  <TableChartIcon sx={{color:'white',fontSize:18}} />
+                <Box sx={{bgcolor:'rgba(245,158,11,0.18)',borderRadius:'8px',p:0.75,display:'flex'}}>
+                  <TableChartIcon sx={{color:'#F59E0B',fontSize:18}} />
                 </Box>
                 <Typography variant="h6">Stored Features</Typography>
                 {!featuresLoading && (
@@ -241,15 +242,15 @@ export default function FeatureUpload() {
           <Card>
             <CardContent>
               <Stack direction="row" spacing={1} alignItems="center" mb={2}>
-                <Box sx={{bgcolor:'secondary.main',borderRadius:'8px',p:0.75,display:'flex'}}>
-                  <InfoOutlinedIcon sx={{color:'white',fontSize:16}} />
+                <Box sx={{bgcolor:'rgba(129,140,248,0.20)',borderRadius:'8px',p:0.75,display:'flex'}}>
+                  <InfoOutlinedIcon sx={{color:'#A5B4FC',fontSize:16}} />
                 </Box>
                 <Typography variant="subtitle1">Required Columns</Typography>
               </Stack>
               <List dense disablePadding>
                 {REQUIRED_COLUMNS.map(col=>(
                   <ListItem key={col} disableGutters
-                    sx={{py:0.4,px:1,mb:0.5,borderRadius:2,bgcolor:'#F8FAFC',border:'1px solid',borderColor:'divider'}}>
+                    sx={{py:0.4,px:1,mb:0.5,borderRadius:2,bgcolor:'rgba(238,240,255,0.04)',border:'1px solid',borderColor:'divider'}}>
                     <ListItemIcon sx={{minWidth:26}}><CheckCircleIcon sx={{fontSize:14,color:'success.main'}} /></ListItemIcon>
                     <ListItemText primary={col} primaryTypographyProps={{variant:'body2',fontWeight:600,fontSize:'0.82rem'}} />
                   </ListItem>
@@ -269,12 +270,12 @@ export default function FeatureUpload() {
           </Card>
 
           {hasExisting && (
-            <Card sx={{border:'1px solid',borderColor:'warning.light',bgcolor:'#FFFBF0'}}>
+            <Card sx={{border:'1px solid',borderColor:'rgba(245,158,11,0.35)',bgcolor:'rgba(245,158,11,0.06)'}}>
               <CardContent>
                 <Stack direction="row" spacing={1.5} alignItems="flex-start">
                   <WarningAmberIcon sx={{color:'warning.main',fontSize:22,mt:0.2}} />
                   <Box>
-                    <Typography variant="subtitle2" color="warning.dark" fontWeight={700} mb={0.5}>Existing Data</Typography>
+                    <Typography variant="subtitle2" sx={{color:'#F59E0B'}} fontWeight={700} mb={0.5}>Existing Data</Typography>
                     <Typography variant="caption" color="text.secondary">
                       {existingFeatures.length} features are stored. A new upload will <strong>replace all existing data</strong>.
                     </Typography>
