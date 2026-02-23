@@ -31,9 +31,9 @@ import { EmptyDashboardIllustration, DotsPattern, SprintVelocityIcon } from '../
 
 // ── Health config ─────────────────────────────────────────────────────────────
 const HEALTH = {
-  'On Track':        { color: '#059669', bg: '#ECFDF5', border: '#6EE7B7', dot: '#34D399' },
-  'Needs Attention': { color: '#D97706', bg: '#FFFBEB', border: '#FDE68A', dot: '#FBBF24' },
-  'Behind Schedule': { color: '#DC2626', bg: '#FEF2F2', border: '#FCA5A5', dot: '#F87171' },
+  'On Track':        { color: '#10B981', bg: 'rgba(16,185,129,0.12)',  border: 'rgba(16,185,129,0.30)',  dot: '#34D399' },
+  'Needs Attention': { color: '#F59E0B', bg: 'rgba(245,158,11,0.12)',  border: 'rgba(245,158,11,0.30)',  dot: '#FBBF24' },
+  'Behind Schedule': { color: '#F87171', bg: 'rgba(248,113,113,0.12)', border: 'rgba(248,113,113,0.30)', dot: '#F87171' },
 }
 
 function getHealth(rate) {
@@ -102,7 +102,7 @@ function ChartCard({ id, title, subtitle, insight, children, action }) {
         {insight && (
           <>
             <Divider />
-            <Box px={3} py={1.5} sx={{ bgcolor: '#F8FAFC', display: 'flex', alignItems: 'flex-start', gap: 0.75 }}>
+            <Box px={3} py={1.5} sx={{ bgcolor: 'rgba(238,240,255,0.04)', display: 'flex', alignItems: 'flex-start', gap: 0.75 }}>
               <AssessmentIcon sx={{ fontSize: 14, color: '#0EA5E9', mt: '1px', flexShrink: 0 }} />
               <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.5 }}>
                 {insight}
@@ -289,24 +289,24 @@ export default function Dashboard() {
   // Assemble insight cards (filter nulls)
   const insights = [
     criticalFeatures.length > 0 && {
-      icon: <WarningAmberIcon sx={{ fontSize: 17, color: criticalRate >= 75 ? '#059669' : '#DC2626' }} />,
-      bg: criticalRate >= 75 ? '#ECFDF5' : '#FEF2F2',
-      border: criticalRate >= 75 ? '#6EE7B7' : '#FCA5A5',
+      icon: <WarningAmberIcon sx={{ fontSize: 17, color: criticalRate >= 75 ? '#10B981' : '#F87171' }} />,
+      bg: criticalRate >= 75 ? 'rgba(16,185,129,0.10)' : 'rgba(248,113,113,0.10)',
+      border: criticalRate >= 75 ? 'rgba(16,185,129,0.25)' : 'rgba(248,113,113,0.25)',
       text: critText,
     },
     sprintInsight && {
-      icon: <SpeedIcon sx={{ fontSize: 17, color: '#1A3A6B' }} />,
-      bg: '#EFF4FB', border: '#ADC6E7',
+      icon: <SpeedIcon sx={{ fontSize: 17, color: '#818CF8' }} />,
+      bg: 'rgba(129,140,248,0.10)', border: 'rgba(129,140,248,0.25)',
       text: sprintInsight,
     },
     teamInsight && {
-      icon: <EmojiEventsIcon sx={{ fontSize: 17, color: '#D97706' }} />,
-      bg: '#FFFBEB', border: '#FDE68A',
+      icon: <EmojiEventsIcon sx={{ fontSize: 17, color: '#F59E0B' }} />,
+      bg: 'rgba(245,158,11,0.10)', border: 'rgba(245,158,11,0.25)',
       text: teamInsight,
     },
     metrics.inProgress > 0 && {
-      icon: <HourglassEmptyIcon sx={{ fontSize: 17, color: '#0EA5E9' }} />,
-      bg: '#EFF8FF', border: '#BAE6FD',
+      icon: <HourglassEmptyIcon sx={{ fontSize: 17, color: '#38BDF8' }} />,
+      bg: 'rgba(56,189,248,0.10)', border: 'rgba(56,189,248,0.25)',
       text: `${metrics.inProgress} feature${metrics.inProgress !== 1 ? 's' : ''} still in progress across ${remainingInActiveSprints} active sprint${remainingInActiveSprints !== 1 ? 's' : ''}.`,
     },
   ].filter(Boolean)
@@ -429,7 +429,7 @@ export default function Dashboard() {
           <SectionHeader icon={SpeedIcon} label="Sprint Health Scorecard" />
           <Card>
             <CardContent sx={{ p: 0, '&:last-child': { pb: 0 } }}>
-              <Box px={3} py={1.75} sx={{ borderBottom: '1px solid', borderColor: 'divider', bgcolor: '#F8FAFC' }}>
+              <Box px={3} py={1.75} sx={{ borderBottom: '1px solid', borderColor: 'divider', bgcolor: 'rgba(238,240,255,0.04)' }}>
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                   <Typography variant="caption" color="text.secondary" fontWeight={600}>
                     {metrics.featuresPerSprint.length} sprint{metrics.featuresPerSprint.length !== 1 ? 's' : ''} tracked
@@ -475,7 +475,7 @@ export default function Dashboard() {
           insight={sprintInsight}
           action={
             <Chip label={`${metrics.featuresPerSprint.length} Sprints`} size="small"
-              sx={{ bgcolor: '#EFF4FB', color: 'primary.main', fontWeight: 700, fontSize: '0.72rem' }} />
+              sx={{ bgcolor: 'rgba(129,140,248,0.14)', color: '#818CF8', border: '1px solid rgba(129,140,248,0.30)', fontWeight: 700, fontSize: '0.72rem' }} />
           }>
           {metrics.featuresPerSprint.length === 0
             ? <Typography variant="body2" color="text.secondary" py={6} textAlign="center">No sprint data available.</Typography>
@@ -543,13 +543,13 @@ export default function Dashboard() {
                 <Box component="table" sx={{
                   width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem',
                   '& th': {
-                    textAlign: 'left', py: 1.5, px: 2.5, bgcolor: '#F8FAFC', fontWeight: 800,
-                    fontSize: '0.70rem', color: '#546E8A', borderBottom: '2px solid',
-                    borderColor: 'divider', letterSpacing: '0.06em', textTransform: 'uppercase',
+                    textAlign: 'left', py: 1.5, px: 2.5, bgcolor: '#1A1E2C', fontWeight: 800,
+                    fontSize: '0.70rem', color: '#8891A8', borderBottom: '2px solid',
+                    borderColor: 'rgba(238,240,255,0.08)', letterSpacing: '0.06em', textTransform: 'uppercase',
                   },
-                  '& td': { py: 1.75, px: 2.5, borderBottom: '1px solid', borderColor: 'divider', verticalAlign: 'middle' },
+                  '& td': { py: 1.75, px: 2.5, borderBottom: '1px solid', borderColor: 'rgba(238,240,255,0.06)', verticalAlign: 'middle' },
                   '& tr:last-child td': { border: 0 },
-                  '& tbody tr:hover td': { bgcolor: '#FAFCFF' },
+                  '& tbody tr:hover td': { bgcolor: 'rgba(238,240,255,0.03)' },
                 }}>
                   <thead>
                     <tr>
@@ -571,8 +571,8 @@ export default function Dashboard() {
                           <td>
                             <Stack direction="row" alignItems="center" spacing={1.5}>
                               <Avatar sx={{
-                                width: 34, height: 34, bgcolor: '#EFF4FB',
-                                color: '#1A3A6B', fontSize: '0.72rem', fontWeight: 800,
+                                width: 34, height: 34, bgcolor: 'rgba(129,140,248,0.18)',
+                                color: '#818CF8', fontSize: '0.72rem', fontWeight: 800,
                               }}>
                                 {initials(row.assignee)}
                               </Avatar>
@@ -581,16 +581,17 @@ export default function Dashboard() {
                           </td>
                           <td style={{ textAlign: 'center' }}>
                             <Chip label={row.total} size="small"
-                              sx={{ bgcolor: '#EFF4FB', color: '#1A3A6B', fontWeight: 800, minWidth: 36 }} />
+                              sx={{ bgcolor: 'rgba(129,140,248,0.14)', color: '#818CF8', border: '1px solid rgba(129,140,248,0.30)', fontWeight: 800, minWidth: 36 }} />
                           </td>
                           <td style={{ textAlign: 'center' }}>
                             <Chip label={row.completed} size="small"
-                              sx={{ bgcolor: '#ECFDF5', color: '#059669', fontWeight: 800, minWidth: 36 }} />
+                              sx={{ bgcolor: 'rgba(16,185,129,0.14)', color: '#10B981', border: '1px solid rgba(16,185,129,0.30)', fontWeight: 800, minWidth: 36 }} />
                           </td>
                           <td style={{ textAlign: 'center' }}>
                             <Chip label={row.total - row.completed} size="small" sx={{
-                              bgcolor: (row.total - row.completed) === 0 ? '#ECFDF5' : '#FFF8EC',
-                              color: (row.total - row.completed) === 0 ? '#059669' : '#D97706',
+                              bgcolor: (row.total - row.completed) === 0 ? 'rgba(16,185,129,0.14)' : 'rgba(245,158,11,0.14)',
+                              color: (row.total - row.completed) === 0 ? '#10B981' : '#F59E0B',
+                              border: `1px solid ${(row.total - row.completed) === 0 ? 'rgba(16,185,129,0.30)' : 'rgba(245,158,11,0.30)'}`,
                               fontWeight: 800, minWidth: 36,
                             }} />
                           </td>

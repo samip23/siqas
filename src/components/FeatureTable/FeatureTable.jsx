@@ -4,29 +4,28 @@ import { Box, Chip, Typography, useTheme } from '@mui/material'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'
 import { format } from 'date-fns'
-import { normalizePriority, getPriorityColor } from '../../utils/metrics'
+import { normalizePriority } from '../../utils/metrics'
 
-const PRIORITY_BG = {
-  Critical: '#FFF0F0',
-  High: '#FFF5E6',
-  Medium: '#EFF4FF',
-  Low: '#F0FFF4',
-  'Nice-to-Have': '#F5F0FF',
-  Unknown: '#F5F5F5',
+const PRIORITY_STYLE = {
+  Critical:      { bg: 'rgba(248,113,113,0.14)', color: '#F87171', border: 'rgba(248,113,113,0.30)' },
+  High:          { bg: 'rgba(251,146,60,0.14)',  color: '#FB923C', border: 'rgba(251,146,60,0.30)'  },
+  Medium:        { bg: 'rgba(245,158,11,0.14)',  color: '#F59E0B', border: 'rgba(245,158,11,0.30)'  },
+  Low:           { bg: 'rgba(16,185,129,0.14)',  color: '#10B981', border: 'rgba(16,185,129,0.30)'  },
+  'Nice-to-Have':{ bg: 'rgba(129,140,248,0.14)', color: '#818CF8', border: 'rgba(129,140,248,0.30)' },
+  Unknown:       { bg: 'rgba(238,240,255,0.08)', color: '#8891A8', border: 'rgba(238,240,255,0.15)' },
 }
 
 function PriorityChip({ value }) {
   const label = normalizePriority(value)
-  const color = getPriorityColor(label)
-  const bg = PRIORITY_BG[label] ?? '#F5F5F5'
+  const s = PRIORITY_STYLE[label] ?? PRIORITY_STYLE.Unknown
   return (
     <Chip
       label={label}
       size="small"
       sx={{
-        bgcolor: bg,
-        color,
-        border: `1px solid ${color}30`,
+        bgcolor: s.bg,
+        color: s.color,
+        border: `1px solid ${s.border}`,
         fontWeight: 600,
         fontSize: '0.72rem',
       }}
@@ -37,17 +36,17 @@ function PriorityChip({ value }) {
 function StatusChip({ completed }) {
   return completed ? (
     <Chip
-      icon={<CheckCircleIcon sx={{ fontSize: '14px !important' }} />}
+      icon={<CheckCircleIcon sx={{ fontSize: '14px !important', color: '#10B981 !important' }} />}
       label="Completed"
       size="small"
-      sx={{ bgcolor: '#F0FFF4', color: '#2E7D32', border: '1px solid #2E7D3230', fontWeight: 600, fontSize: '0.72rem' }}
+      sx={{ bgcolor: 'rgba(16,185,129,0.14)', color: '#10B981', border: '1px solid rgba(16,185,129,0.30)', fontWeight: 600, fontSize: '0.72rem' }}
     />
   ) : (
     <Chip
-      icon={<RadioButtonUncheckedIcon sx={{ fontSize: '14px !important' }} />}
+      icon={<RadioButtonUncheckedIcon sx={{ fontSize: '14px !important', color: '#60A5FA !important' }} />}
       label="In Progress"
       size="small"
-      sx={{ bgcolor: '#EFF4FF', color: '#1565C0', border: '1px solid #1565C030', fontWeight: 600, fontSize: '0.72rem' }}
+      sx={{ bgcolor: 'rgba(96,165,250,0.14)', color: '#60A5FA', border: '1px solid rgba(96,165,250,0.30)', fontWeight: 600, fontSize: '0.72rem' }}
     />
   )
 }
@@ -153,24 +152,46 @@ export default function FeatureTable({ rows = [], loading = false }) {
     <Box
       sx={{
         width: '100%',
+        '& .MuiDataGrid-root': {
+          bgcolor: '#141720',
+          color: '#EEF0FF',
+        },
+        '& .MuiDataGrid-main': { bgcolor: '#141720' },
+        '& .MuiDataGrid-virtualScrollerContent': { bgcolor: '#141720' },
+        '& .MuiDataGrid-row': {
+          bgcolor: '#141720',
+          '&:hover': { bgcolor: 'rgba(238,240,255,0.04) !important' },
+        },
         '& .row-completed': {
-          bgcolor: '#F6FFF8',
-          '&:hover': { bgcolor: '#ECF9EF !important' },
+          bgcolor: 'rgba(16,185,129,0.05) !important',
+          '&:hover': { bgcolor: 'rgba(16,185,129,0.09) !important' },
         },
         '& .MuiDataGrid-columnHeader': {
-          bgcolor: theme.palette.background.default,
+          bgcolor: '#1A1E2C',
           fontWeight: 700,
-          color: theme.palette.text.primary,
+          color: '#8891A8',
         },
+        '& .MuiDataGrid-columnHeaders': { bgcolor: '#1A1E2C' },
         '& .MuiDataGrid-toolbarContainer': {
+          bgcolor: '#141720',
           px: 2,
           py: 1,
-          borderBottom: `1px solid ${theme.palette.divider}`,
+          borderBottom: `1px solid rgba(238,240,255,0.08)`,
           gap: 1,
+          '& .MuiButton-root': { color: '#F59E0B' },
+          '& .MuiInputBase-root': { color: '#EEF0FF' },
         },
         '& .MuiDataGrid-footerContainer': {
-          borderTop: `1px solid ${theme.palette.divider}`,
+          bgcolor: '#141720',
+          borderTop: `1px solid rgba(238,240,255,0.08)`,
+          color: '#8891A8',
         },
+        '& .MuiTablePagination-root': { color: '#8891A8' },
+        '& .MuiTablePagination-selectIcon': { color: '#8891A8' },
+        '& .MuiDataGrid-iconSeparator': { color: 'rgba(238,240,255,0.12)' },
+        '& .MuiDataGrid-menuIcon': { color: '#8891A8' },
+        '& .MuiDataGrid-sortIcon': { color: '#F59E0B' },
+        '& .MuiDataGrid-filterIcon': { color: '#F59E0B' },
       }}
     >
       <DataGrid
