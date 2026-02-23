@@ -3,6 +3,7 @@ import {
   Box, Card, CardContent, Typography, Button, Stack, Grid,
   Chip, Divider, Alert, LinearProgress, Dialog, DialogTitle,
   DialogContent, DialogActions, IconButton, Collapse, Tooltip,
+  MenuItem, TextField, Snackbar, CircularProgress,
 } from '@mui/material'
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
 import UploadFileIcon from '@mui/icons-material/UploadFile'
@@ -13,12 +14,16 @@ import OpenInFullIcon from '@mui/icons-material/OpenInFull'
 import ReplayIcon from '@mui/icons-material/Replay'
 import WarningAmberIcon from '@mui/icons-material/WarningAmber'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
+import SaveIcon from '@mui/icons-material/Save'
 import {
   PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis,
   Tooltip as ReTooltip, Legend, ResponsiveContainer,
 } from 'recharts'
 import { parseRequirementsCSV } from '../../services/requirementParser'
 import { DotsPattern } from '../../components/illustrations/Illustrations'
+import { useAuth } from '../../context/AuthContext'
+import { useTestPlans } from '../../hooks/useTestPlans'
+import { createPlan, addTestCasesBatch } from '../../services/testPlanService'
 
 // ── States ────────────────────────────────────────────────────────────────────
 const S = { IDLE: 'IDLE', PARSED: 'PARSED', GENERATING: 'GENERATING', DONE: 'DONE', ERROR: 'ERROR' }
@@ -411,6 +416,9 @@ function downloadCSV(testCases) {
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 export default function TestGenerator() {
+  const { currentUser } = useAuth()
+  const { plans } = useTestPlans()
+
   const [phase, setPhase]           = useState(S.IDLE)
   const [fileName, setFileName]     = useState('')
   const [requirements, setRequirements] = useState([])
@@ -419,6 +427,38 @@ export default function TestGenerator() {
   const [errorMsg, setErrorMsg]     = useState('')
   const [selected, setSelected]     = useState(null)
   const [showWarnings, setShowWarnings] = useState(false)
+
+  // Save-to-Plan dialog state
+  const [saveDialogOpen, setSaveDialogOpen] = useState(false)
+  const [saveToPlanId,   setSaveToPlanId]   = useState('__new__')
+  const [newPlanName,    setNewPlanName]     = useState('')
+  const [newPlanSprint,  setNewPlanSprint]   = useState('')
+  const [saving,         setSaving]          = useState(false)
+  const [saveSnack,      setSaveSnack]       = useState('')
+
+  async function handleSaveToPlan() {
+    setSaving(true)
+    try {
+      let planId = saveToPlanId
+      let planName = ''
+      if (saveToPlanId === '__new__') {
+        if (!newPlanName.trim() || !newPlanSprint) return
+        const ref = await createPlan(currentUser, { name: newPlanName, sprintNumber: newPlanSprint, description: '', featureIds: [] })
+        planId = ref.id
+        planName = newPlanName
+      } else {
+        planName = plans.find(p => p.id === planId)?.name ?? 'Plan'
+      }
+      await addTestCasesBatch(planId, currentUser, testCases)
+      setSaveSnack(`${testCases.length} test cases saved to "${planName}"`)
+      setSaveDialogOpen(false)
+      setSaveToPlanId('__new__')
+      setNewPlanName('')
+      setNewPlanSprint('')
+    } finally {
+      setSaving(false)
+    }
+  }
 
   async function handleFile(file) {
     setFileName(file.name)
@@ -674,9 +714,14 @@ export default function TestGenerator() {
                       Click any row to view full details — steps and expected results
                     </Typography>
                   </Box>
-                  <Stack direction="row" spacing={1}>
+                  <Stack direction="row" spacing={1} flexWrap="wrap" gap={1}>
                     <Button variant="outlined" size="small" startIcon={<ReplayIcon />} onClick={reset}>
                       New file
+                    </Button>
+                    <Button variant="outlined" size="small" startIcon={<SaveIcon />}
+                      onClick={() => setSaveDialogOpen(true)}
+                      sx={{ borderColor: 'rgba(16,185,129,0.40)', color: '#10B981', '&:hover': { borderColor: '#10B981', bgcolor: 'rgba(16,185,129,0.06)' } }}>
+                      Save to Plan
                     </Button>
                     <Button variant="contained" size="small" startIcon={<DownloadIcon />}
                       onClick={() => downloadCSV(testCases)}
@@ -694,6 +739,52 @@ export default function TestGenerator() {
 
       {/* Detail dialog */}
       {selected && <DetailDialog tc={selected} onClose={() => setSelected(null)} />}
+
+      {/* Save to Plan dialog */}
+      <Dialog
+        open={saveDialogOpen}
+        onClose={() => setSaveDialogOpen(false)}
+        maxWidth="xs" fullWidth
+        PaperProps={{ sx: { bgcolor: '#141720', borderRadius: 3, border: '1px solid rgba(238,240,255,0.10)' } }}
+      >
+        <DialogTitle sx={{ color: '#EEF0FF', fontWeight: 700 }}>Save to Test Plan</DialogTitle>
+        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '8px !important' }}>
+          <TextField
+            select label="Choose a plan" value={saveToPlanId}
+            onChange={e => setSaveToPlanId(e.target.value)} fullWidth size="small"
+          >
+            <MenuItem value="__new__">+ Create new plan</MenuItem>
+            {plans.map(p => (
+              <MenuItem key={p.id} value={p.id}>Sprint {p.sprintNumber} — {p.name}</MenuItem>
+            ))}
+          </TextField>
+          {saveToPlanId === '__new__' && (
+            <>
+              <TextField label="Plan Name" value={newPlanName} onChange={e => setNewPlanName(e.target.value)} required fullWidth size="small" />
+              <TextField label="Sprint Number" type="number" value={newPlanSprint} onChange={e => setNewPlanSprint(e.target.value)} required fullWidth size="small" inputProps={{ min: 1 }} />
+            </>
+          )}
+          <Typography sx={{ fontSize: '0.82rem', color: 'rgba(238,240,255,0.45)' }}>
+            {testCases.length} test case{testCases.length !== 1 ? 's' : ''} will be saved with status "Not Run".
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ p: 2.5, pt: 0, gap: 1 }}>
+          <Button onClick={() => setSaveDialogOpen(false)} sx={{ color: '#8891A8' }}>Cancel</Button>
+          <Button
+            onClick={handleSaveToPlan}
+            disabled={saving || (saveToPlanId === '__new__' && (!newPlanName.trim() || !newPlanSprint))}
+            variant="contained"
+            startIcon={saving ? <CircularProgress size={14} sx={{ color: 'inherit' }} /> : <SaveIcon />}
+            sx={{ background: 'linear-gradient(135deg, #10B981, #059669)', fontWeight: 700, borderRadius: '8px', '&.Mui-disabled': { opacity: 0.5 } }}
+          >
+            {saving ? 'Saving…' : 'Save'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Snackbar open={!!saveSnack} autoHideDuration={4000} onClose={() => setSaveSnack('')} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+        <Alert severity="success" onClose={() => setSaveSnack('')} sx={{ borderRadius: 2, fontWeight: 600 }}>{saveSnack}</Alert>
+      </Snackbar>
     </Box>
   )
 }
