@@ -438,6 +438,7 @@ export default function TestPlans({ generatedCases = [] }) {
   const [planForm,     setPlanForm]      = useState(PLAN_INIT)
   const [creating,     setCreating]      = useState(false)
   const [deleteTarget, setDeleteTarget]  = useState(null)
+  const [createError,  setCreateError]   = useState('')
 
   // Keep selectedPlan in sync with live plans data
   useEffect(() => {
@@ -459,10 +460,14 @@ export default function TestPlans({ generatedCases = [] }) {
     e.preventDefault()
     if (!planForm.name.trim() || !planForm.sprintNumber) return
     setCreating(true)
+    setCreateError('')
     try {
       await createPlan(currentUser, planForm)
       setPlanForm(PLAN_INIT)
       setDialogOpen(false)
+    } catch (err) {
+      console.error('createPlan failed:', err)
+      setCreateError(err.message ?? 'Failed to create plan. Check console for details.')
     } finally {
       setCreating(false)
     }
@@ -588,6 +593,9 @@ export default function TestPlans({ generatedCases = [] }) {
         <DialogTitle sx={{ color: '#EEF0FF', fontWeight: 700 }}>New Test Plan</DialogTitle>
         <Box component="form" onSubmit={handleCreatePlan}>
           <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            {createError && (
+              <Alert severity="error" sx={{ borderRadius: 2 }}>{createError}</Alert>
+            )}
             <TextField label="Plan Name" value={planForm.name} onChange={setP('name')} required fullWidth />
             <TextField
               label="Sprint Number" type="number"
