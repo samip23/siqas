@@ -12,6 +12,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard'
 import LogoutIcon from '@mui/icons-material/Logout'
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
 import CampaignIcon from '@mui/icons-material/Campaign'
+import BugReportIcon from '@mui/icons-material/BugReport'
 import { QAShieldMark } from '../illustrations/Illustrations'
 import { useAuth } from '../../context/AuthContext'
 
@@ -20,6 +21,7 @@ const NAV_LINKS = [
   { label: 'Dashboard',         path: '/dashboard',      icon: <DashboardIcon    fontSize="small" /> },
   { label: 'Test Generator',    path: '/test-generator', icon: <AutoAwesomeIcon  fontSize="small" /> },
   { label: 'Bulletin Board',    path: '/bulletin',       icon: <CampaignIcon     fontSize="small" /> },
+  { label: 'Defects',           path: '/defects',        icon: <BugReportIcon    fontSize="small" /> },
 ]
 
 export default function Navbar() {

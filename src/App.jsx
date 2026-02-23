@@ -8,6 +8,7 @@ import FeatureUpload from './pages/FeatureUpload'
 import Dashboard from './pages/Dashboard'
 import TestGenerator from './pages/TestGenerator'
 import Bulletin from './pages/Bulletin'
+import Defects from './pages/Defects'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 
@@ -46,6 +47,7 @@ function AppShell() {
           <Route path="/dashboard"       element={<Dashboard />} />
           <Route path="/test-generator"  element={<TestGenerator />} />
           <Route path="/bulletin"        element={<Bulletin />} />
+          <Route path="/defects"         element={<Defects />} />
           <Route path="*"          element={<Navigate to="/upload" replace />} />
         </Route>
       </Route>
