@@ -398,6 +398,22 @@ function TestSummaryCharts({ testCases, requirements }) {
   )
 }
 
+// ── Template CSV Download ─────────────────────────────────────────────────────
+function downloadTemplate() {
+  const rows = [
+    'id,title,description,priority,category',
+    'REQ-001,User Login,The system shall allow users to log in with a valid email and password.,High,Authentication',
+    'REQ-002,Password Reset,Users shall be able to reset their password via a verified email link.,Medium,Authentication',
+    'REQ-003,Dashboard View,The system shall display a personalised dashboard after successful login.,Low,UI',
+    'REQ-004,Export Report,Users shall be able to export reports as a CSV file.,Medium,Reporting',
+  ]
+  const blob = new Blob([rows.join('\r\n')], { type: 'text/csv' })
+  const url  = URL.createObjectURL(blob)
+  const a    = document.createElement('a')
+  a.href = url; a.download = 'requirements_template.csv'
+  a.click(); URL.revokeObjectURL(url)
+}
+
 // ── CSV Download helper ───────────────────────────────────────────────────────
 function downloadCSV(testCases) {
   const headers = ['Test ID', 'Requirement ID', 'Name', 'Description', 'Steps', 'Expected Result', 'Priority', 'Type']
@@ -557,9 +573,25 @@ export default function TestGenerator() {
           <Grid item xs={12} md={8}>
             <Card>
               <CardContent sx={{ p: 3 }}>
-                <Typography variant="h6" fontWeight={700} mb={0.5}>Upload Requirements CSV</Typography>
+                <Stack direction="row" alignItems="flex-start" justifyContent="space-between" flexWrap="wrap" gap={1} mb={0.5}>
+                  <Typography variant="h6" fontWeight={700}>Upload Requirements CSV</Typography>
+                  <Button
+                    size="small"
+                    startIcon={<DownloadIcon />}
+                    onClick={downloadTemplate}
+                    sx={{
+                      borderColor: 'rgba(129,140,248,0.35)', color: '#818CF8',
+                      border: '1px solid', borderRadius: '8px',
+                      fontSize: '0.75rem', fontWeight: 600, px: 1.5,
+                      '&:hover': { borderColor: '#818CF8', bgcolor: 'rgba(129,140,248,0.08)' },
+                    }}
+                  >
+                    Download Template
+                  </Button>
+                </Stack>
                 <Typography variant="body2" color="text.secondary" mb={2.5}>
                   The CSV should have at minimum an ID column and a Description column.
+                  Not sure of the format? Download the template above, fill it in, and re-upload.
                 </Typography>
                 <DropZone onFile={handleFile} disabled={false} />
               </CardContent>
