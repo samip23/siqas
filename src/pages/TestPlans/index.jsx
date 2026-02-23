@@ -457,9 +457,16 @@ export default function TestPlans({ generatedCases = [] }) {
   }))
 
   async function handleCreatePlan() {
-    if (!planForm.name.trim() || !planForm.sprintNumber) return
-    setCreating(true)
     setCreateError('')
+    if (!planForm.name.trim()) {
+      setCreateError('Plan name is required.')
+      return
+    }
+    if (!planForm.sprintNumber) {
+      setCreateError('Sprint number is required.')
+      return
+    }
+    setCreating(true)
     try {
       await createPlan(currentUser, planForm)
       setPlanForm(PLAN_INIT)
@@ -635,7 +642,7 @@ export default function TestPlans({ generatedCases = [] }) {
             <Button
               onClick={handleCreatePlan}
               variant="contained"
-              disabled={!planForm.name.trim() || !planForm.sprintNumber || creating}
+              disabled={creating}
               sx={{
                 background: 'linear-gradient(135deg, #10B981, #059669)',
                 fontWeight: 700, borderRadius: '8px',
