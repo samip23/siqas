@@ -10,14 +10,13 @@ export function useTestPlans() {
   useEffect(() => {
     const q = query(
       collection(db, 'testPlans'),
-      orderBy('sprintNumber', 'asc'),
       orderBy('createdAt', 'desc')
     )
 
     const unsubscribe = onSnapshot(
       q,
       snap => {
-        setPlans(snap.docs.map(d => {
+        const docs = snap.docs.map(d => {
           const data = d.data()
           return {
             id:           d.id,
@@ -29,7 +28,14 @@ export function useTestPlans() {
             createdBy:    data.createdBy,
             authorId:     data.authorId,
           }
-        }))
+        })
+        // Sort client-side: sprint asc, then createdAt desc within sprint
+        docs.sort((a, b) =>
+          a.sprintNumber !== b.sprintNumber
+            ? a.sprintNumber - b.sprintNumber
+            : (b.createdAt ?? 0) - (a.createdAt ?? 0)
+        )
+        setPlans(docs)
         setLoading(false)
         setError(null)
       },
