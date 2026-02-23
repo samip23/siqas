@@ -15,6 +15,7 @@ import CampaignIcon from '@mui/icons-material/Campaign'
 import BugReportIcon from '@mui/icons-material/BugReport'
 import { QAShieldMark } from '../illustrations/Illustrations'
 import { useAuth } from '../../context/AuthContext'
+import { useProfile } from '../../hooks/useProfile'
 
 const NAV_LINKS = [
   { label: 'Feature Upload',    path: '/upload',         icon: <UploadFileIcon   fontSize="small" /> },
@@ -31,9 +32,14 @@ export default function Navbar() {
   const isMobile  = useMediaQuery(theme.breakpoints.down('sm'))
   const [drawerOpen, setDrawerOpen] = useState(false)
   const { currentUser, logOut } = useAuth()
+  const { profile } = useProfile(currentUser?.uid)
   const isActive = path => location.pathname === path
 
-  const avatarLetter = currentUser?.email?.[0]?.toUpperCase() ?? '?'
+  const displayLabel  = profile?.displayName || currentUser?.email || ''
+  const avatarLetter  = displayLabel[0]?.toUpperCase() ?? '?'
+  const avatarBg      = profile?.avatarColor
+    ? `linear-gradient(135deg, ${profile.avatarColor}, ${profile.avatarColor}CC)`
+    : 'linear-gradient(135deg, #F59E0B, #D97706)'
 
   async function handleLogout() {
     await logOut()
@@ -115,17 +121,25 @@ export default function Navbar() {
           {/* Desktop: user info + logout */}
           {!isMobile && currentUser && (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Tooltip title={currentUser.email} placement="bottom-end">
-                <Box sx={{
-                  display: 'flex', alignItems: 'center', gap: 1,
-                  bgcolor: 'rgba(238,240,255,0.04)',
-                  border: '1px solid rgba(238,240,255,0.08)',
-                  borderRadius: '9px', px: 1.25, py: 0.55,
-                  cursor: 'default',
-                }}>
+              <Tooltip title={`${currentUser.email} — Edit profile`} placement="bottom-end">
+                <Box
+                  onClick={() => navigate('/profile')}
+                  sx={{
+                    display: 'flex', alignItems: 'center', gap: 1,
+                    bgcolor: 'rgba(238,240,255,0.04)',
+                    border: '1px solid rgba(238,240,255,0.08)',
+                    borderRadius: '9px', px: 1.25, py: 0.55,
+                    cursor: 'pointer',
+                    transition: 'all 0.16s',
+                    '&:hover': {
+                      bgcolor: 'rgba(238,240,255,0.08)',
+                      border: '1px solid rgba(238,240,255,0.14)',
+                    },
+                  }}
+                >
                   <Avatar sx={{
                     width: 24, height: 24,
-                    background: 'linear-gradient(135deg, #F59E0B, #D97706)',
+                    background: avatarBg,
                     color: '#0C0E14',
                     fontSize: '0.68rem', fontWeight: 800,
                   }}>
@@ -137,7 +151,7 @@ export default function Navbar() {
                     maxWidth: 150, overflow: 'hidden',
                     textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                   }}>
-                    {currentUser.email}
+                    {displayLabel}
                   </Typography>
                 </Box>
               </Tooltip>

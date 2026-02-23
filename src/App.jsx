@@ -9,6 +9,7 @@ import Dashboard from './pages/Dashboard'
 import TestGenerator from './pages/TestGenerator'
 import Bulletin from './pages/Bulletin'
 import Defects from './pages/Defects'
+import Profile from './pages/Profile'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 
@@ -48,6 +49,7 @@ function AppShell() {
           <Route path="/test-generator"  element={<TestGenerator />} />
           <Route path="/bulletin"        element={<Bulletin />} />
           <Route path="/defects"         element={<Defects />} />
+          <Route path="/profile"         element={<Profile />} />
           <Route path="*"          element={<Navigate to="/upload" replace />} />
         </Route>
       </Route>
