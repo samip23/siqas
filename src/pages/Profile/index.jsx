@@ -9,6 +9,7 @@ import SaveIcon from '@mui/icons-material/Save'
 import { useAuth } from '../../context/AuthContext'
 import { useProfile } from '../../hooks/useProfile'
 
+
 const AVATAR_COLORS = [
   { hex: '#F59E0B', label: 'Amber'   },
   { hex: '#818CF8', label: 'Indigo'  },
@@ -23,17 +24,17 @@ const AVATAR_COLORS = [
 const INIT = { displayName: '', jobTitle: '', department: '', bio: '', avatarColor: '#F59E0B' }
 
 export default function Profile() {
-  const { currentUser } = useAuth()
-  const { profile, loading, saving, error: hookError, saveProfile } = useProfile(currentUser?.uid)
+  const { currentUser, authLoading, profile: ctxProfile, updateLocalProfile } = useAuth()
+  const { saving, error: hookError, saveProfile } = useProfile(currentUser?.uid)
 
   const [form, setForm]           = useState(INIT)
   const [formError, setFormError] = useState('')
   const [success, setSuccess]     = useState(false)
 
-  // Populate form once profile loads
+  // Populate form once profile loads from context
   useEffect(() => {
-    if (profile) setForm(profile)
-  }, [profile])
+    if (ctxProfile) setForm(ctxProfile)
+  }, [ctxProfile])
 
   const set = key => e => setForm(f => ({ ...f, [key]: e.target.value }))
   const setColor = hex => setForm(f => ({ ...f, avatarColor: hex }))
@@ -44,6 +45,7 @@ export default function Profile() {
     setFormError('')
     try {
       await saveProfile(form)
+      updateLocalProfile(form)  // sync shared context so Navbar updates instantly
       setSuccess(true)
     } catch {
       // error shown via hookError
@@ -96,7 +98,7 @@ export default function Profile() {
         </Box>
       </Box>
 
-      {loading ? (
+      {authLoading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
           <CircularProgress sx={{ color: '#818CF8' }} />
         </Box>

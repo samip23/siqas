@@ -15,7 +15,6 @@ import CampaignIcon from '@mui/icons-material/Campaign'
 import BugReportIcon from '@mui/icons-material/BugReport'
 import { QAShieldMark } from '../illustrations/Illustrations'
 import { useAuth } from '../../context/AuthContext'
-import { useProfile } from '../../hooks/useProfile'
 
 const NAV_LINKS = [
   { label: 'Feature Upload',    path: '/upload',         icon: <UploadFileIcon   fontSize="small" /> },
@@ -31,8 +30,7 @@ export default function Navbar() {
   const theme     = useTheme()
   const isMobile  = useMediaQuery(theme.breakpoints.down('sm'))
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const { currentUser, logOut } = useAuth()
-  const { profile } = useProfile(currentUser?.uid)
+  const { currentUser, logOut, profile } = useAuth()
   const isActive = path => location.pathname === path
 
   const displayLabel  = profile?.displayName || currentUser?.email || ''

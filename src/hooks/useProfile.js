@@ -1,21 +1,11 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import { updateProfile } from 'firebase/auth'
 import { auth } from '../firebase/config'
-import { getProfile, saveProfile as saveProfileDoc } from '../services/profileService'
+import { saveProfile as saveProfileDoc } from '../services/profileService'
 
 export function useProfile(uid) {
-  const [profile, setProfile]   = useState(null)
-  const [loading, setLoading]   = useState(true)
-  const [saving,  setSaving]    = useState(false)
-  const [error,   setError]     = useState(null)
-
-  useEffect(() => {
-    if (!uid) { setLoading(false); return }
-    getProfile(uid)
-      .then(data => setProfile(data))
-      .catch(err => setError(err.message))
-      .finally(() => setLoading(false))
-  }, [uid])
+  const [saving, setSaving] = useState(false)
+  const [error,  setError]  = useState(null)
 
   const saveProfile = useCallback(async (data) => {
     setSaving(true)
@@ -25,7 +15,6 @@ export function useProfile(uid) {
       if (data.displayName !== undefined) {
         await updateProfile(auth.currentUser, { displayName: data.displayName.trim() || null })
       }
-      setProfile(prev => ({ ...prev, ...data }))
     } catch (err) {
       setError(err.message)
       throw err
@@ -34,5 +23,5 @@ export function useProfile(uid) {
     }
   }, [uid])
 
-  return { profile, loading, saving, error, saveProfile }
+  return { saving, error, saveProfile }
 }
