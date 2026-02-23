@@ -456,8 +456,7 @@ export default function TestPlans({ generatedCases = [] }) {
       : [...f.featureIds, id],
   }))
 
-  async function handleCreatePlan(e) {
-    e.preventDefault()
+  async function handleCreatePlan() {
     if (!planForm.name.trim() || !planForm.sprintNumber) return
     setCreating(true)
     setCreateError('')
@@ -591,7 +590,7 @@ export default function TestPlans({ generatedCases = [] }) {
         PaperProps={{ sx: { bgcolor: '#141720', borderRadius: 3, border: '1px solid rgba(238,240,255,0.10)' } }}
       >
         <DialogTitle sx={{ color: '#EEF0FF', fontWeight: 700 }}>New Test Plan</DialogTitle>
-        <Box component="form" onSubmit={handleCreatePlan}>
+        <Box>
           <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             {createError && (
               <Alert severity="error" sx={{ borderRadius: 2 }}>{createError}</Alert>
@@ -634,7 +633,7 @@ export default function TestPlans({ generatedCases = [] }) {
           <DialogActions sx={{ p: 2.5, pt: 0, gap: 1 }}>
             <Button onClick={() => { setDialogOpen(false); setPlanForm(PLAN_INIT) }} sx={{ color: '#8891A8' }}>Cancel</Button>
             <Button
-              type="submit"
+              onClick={handleCreatePlan}
               variant="contained"
               disabled={!planForm.name.trim() || !planForm.sprintNumber || creating}
               sx={{
